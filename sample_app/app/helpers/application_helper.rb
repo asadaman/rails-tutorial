@@ -1,11 +1,15 @@
 module ApplicationHelper
 
   def full_title(page_title='')
-    base_title = "Ruby on Rails Tutorial Sample App"
-    if page_title.empty?
-      base_title
-    else
-      page_title + "|" + base_title
-    end
+    page_title.empty? ? base_title : format_titile(page_title)
   end
+
+  private def base_title
+    base_title = "Ruby on Rails Tutorial Sample App"
+  end
+
+  private def format_titile(page_title)
+    "#{page_title}|#{base_title}"
+  end
+
 end
