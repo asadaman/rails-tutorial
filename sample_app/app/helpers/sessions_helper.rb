@@ -11,21 +11,28 @@ module SessionsHelper
   end
 
   def user_on_session?
-    user_id = session[:user_id]
+    session[:user_id].present?
   end
 
   def user_on_cookies?
-    user_id = cookies.signed[:user_id]
+    cookies.signed[:user_id].present?
+  end
+
+  def find_current_user_by_using_cookies(user_id)
+    user = User.find_by(id: user_id)
+    if user.authenticated?(cookies[:remember_token])
+      log_in user
+      user
+    end
   end
 
   def current_user
-    if (user_id = user_on_session?)
+    if user_on_session?
+      user_id = session[:user_id]
       @current_user ||= User.find_by(id: user_id)
-    elsif (user_id = user_on_cookies? &&
-             user = User.find_by(id: user_id) &&
-             user.authenticated?(cookies[:remember_token]))
-      log_in user
-      @current_user = user
+    elsif user_on_cookies?
+      user_id = cookies.signed[:user_id]
+      @current_user = find_current_user_by_using_cookies(user_id)
     end
   end
 
