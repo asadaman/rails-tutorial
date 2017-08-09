@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   def remember
     self.remember_token = User.new_token
-    update_attribute(:remember_digest, User.digest(remember_token))
+    update_attribute(:remember_digest, User.convert_string_to_digest(remember_token))
   end
 
   def authenticated?(remember_token)
@@ -22,14 +22,14 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
-  def cost
-    ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
-  end
 
   class << self
-    def digest(string)
-     cost
-     BCrypt::Password.create(string, cost: cost)
+    def cost
+      ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    end
+
+    def convert_string_to_digest(original_string)
+      BCrypt::Password.create(original_string, cost: cost)
     end
 
     def new_token
