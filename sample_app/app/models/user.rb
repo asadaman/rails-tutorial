@@ -24,7 +24,7 @@ class User < ApplicationRecord
 
 
   class << self
-    def cost
+    private def cost
       ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     end
 
