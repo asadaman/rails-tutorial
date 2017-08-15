@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   end
 
   def should_remember_user?
-    params[:session][:remember_me] == '1'? true : false
+    params[:session][:remember_me] == '1'
   end
 
   def create
@@ -16,7 +16,6 @@ class SessionsController < ApplicationController
       flash.now[:danger] = 'invalid email/password combination'
       render 'new'
     end
-
   end
 
   def destroy
