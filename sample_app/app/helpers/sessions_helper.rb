@@ -36,8 +36,12 @@ module SessionsHelper
     end
   end
 
-  def logged_in?
+  def set_current_user
     @current_user = current_user if current_user.present?
+  end
+
+  def logged_in?
+    set_current_user.present?
   end
 
   def forget(user)
