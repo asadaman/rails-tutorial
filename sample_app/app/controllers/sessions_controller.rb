@@ -3,8 +3,7 @@ class SessionsController < ApplicationController
   end
 
   def should_remember_user?
-    checkbox_paramater = params[:session][:remember_me]
-    checkbox_paramater == '1'? true : false
+    params[:session][:remember_me] == '1'? true : false
   end
 
   def create

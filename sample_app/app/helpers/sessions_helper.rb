@@ -29,10 +29,10 @@ module SessionsHelper
   def current_user
     if user_on_session?
       user_id = session[:user_id]
-      current_user ||= User.find_by(id: user_id)
+      user ||= User.find_by(id: user_id)
     elsif user_on_cookies?
       user_id = cookies.signed[:user_id]
-      current_user = find_current_user_by_using_cookies(user_id)
+      user = find_current_user_by_using_cookies(user_id)
     end
   end
 
