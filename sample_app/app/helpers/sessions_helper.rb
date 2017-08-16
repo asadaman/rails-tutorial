@@ -10,6 +10,10 @@ module SessionsHelper
     cookies.permanent[:remember_token] = user.remember_token
   end
 
+  def user_id_from_cookie_or_session
+    session[:user_id] || cookies.signed[:user_id]
+  end
+
   def user_on_session?
     session[:user_id].present?
   end
@@ -18,7 +22,7 @@ module SessionsHelper
     cookies.signed[:user_id].present?
   end
 
-  def find_current_user_by_using_cookies(user_id)
+  def find_user_by_using_cookies(user_id)
     user = User.find_by(id: user_id)
     if user.authenticated?(cookies[:remember_token])
       log_in user
@@ -26,23 +30,52 @@ module SessionsHelper
     end
   end
 
-  def current_user
+  def set_current_user
+    return if user_id_from_cookie_or_session.blank?
     if user_on_session?
-      user_id = session[:user_id]
-      user ||= User.find_by(id: user_id)
+      @current_user ||= User.find(user_id_from_cookie_or_session)
     elsif user_on_cookies?
-      user_id = cookies.signed[:user_id]
-      user = find_current_user_by_using_cookies(user_id)
+      @current_user = find_user_by_using_cookies(user_id_from_cookie_or_session)
     end
   end
 
-  def set_current_user
-    @current_user = current_user if current_user.present?
+  def logged_in?
+    @current_user.present?
   end
 
-  def logged_in?
-    set_current_user.present?
-  end
+  # def user_on_session?
+  #   session[:user_id].present?
+  # end
+  #
+  # def user_on_cookies?
+  #   cookies.signed[:user_id].present?
+  # end
+  #
+  # def find_current_user_by_using_cookies(user_id)
+  #   user = User.find_by(id: user_id)
+  #   if user.authenticated?(cookies[:remember_token])
+  #     log_in user
+  #     user
+  #   end
+  # end
+  #
+  # def current_user
+  #   if user_on_session?
+  #     user_id = session[:user_id]
+  #     user ||= User.find_by(id: user_id)
+  #   elsif user_on_cookies?
+  #     user_id = cookies.signed[:user_id]
+  #     user = find_current_user_by_using_cookies(user_id)
+  #   end
+  # end
+  #
+  # def set_current_user
+  #   @current_user = current_user if current_user.present?
+  # end
+  #
+  # def logged_in?
+  #   set_current_user.present?
+  # end
 
   def forget(user)
     user.forget
@@ -51,7 +84,7 @@ module SessionsHelper
   end
 
   def log_out
-    forget(current_user)
+    forget(set_current_user)
     session.delete(:user_id)
     @current_user = nil
   end
