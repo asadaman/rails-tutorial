@@ -11,8 +11,8 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   def remember
-    self.remember_token = User.new_token
-    update_attribute(:remember_digest, User.convert_string_to_digest(remember_token))
+    self.remember_token = Authentication.new_token
+    update_attribute(:remember_digest, Authentication.convert_string_to_digest(remember_token))
   end
 
   def authenticated?(remember_token)

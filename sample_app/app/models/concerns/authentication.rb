@@ -1,8 +1,7 @@
 module Authentication
   extend ActiveSupport::Concern
 
-  # class << self
-  class << User
+  class << self
     def convert_string_to_digest(original_string)
       BCrypt::Password.create(original_string, cost: cost)
     end
