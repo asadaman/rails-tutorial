@@ -2,6 +2,7 @@ michael:
     name: Michael Example
     email: michael@example.com
     password_digest: <%= Authentication.convert_string_to_digest('password')%>
+    admin: true
 
 archer:
     name: Sterling Archer
