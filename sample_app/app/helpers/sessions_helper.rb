@@ -1,3 +1,4 @@
+require 'pry'
 module SessionsHelper
 
   def log_in(user)
@@ -26,21 +27,18 @@ module SessionsHelper
     cookies.signed[:user_id].present?
   end
 
-  def find_user_by_using_cookies(user_id)
+  def user_from_user_id(user_id)
     user = User.find_by(id: user_id)
-    if user.authenticated?(cookies[:remember_token])
-      log_in user
+    return user if user_on_session?
+    if user_on_cookies? && user.authenticated?(cookies[:remember_token])
+      log_in(user)
       user
     end
   end
 
   def current_user
     return if user_id_from_cookie_or_session.blank?
-    if user_on_session?
-      user = User.find(user_id_from_cookie_or_session)
-    elsif user_on_cookies?
-      user = find_user_by_using_cookies(user_id_from_cookie_or_session)
-    end
+    user = user_from_user_id(user_id_from_cookie_or_session)
   end
 
   def set_current_user
