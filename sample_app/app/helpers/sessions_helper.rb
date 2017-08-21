@@ -1,4 +1,3 @@
-require 'pry'
 module SessionsHelper
 
   def log_in(user)
@@ -38,7 +37,7 @@ module SessionsHelper
 
   def current_user
     return if user_id_from_cookie_or_session.blank?
-    user = user_from_user_id(user_id_from_cookie_or_session)
+    user_from_user_id(user_id_from_cookie_or_session)
   end
 
   def set_current_user

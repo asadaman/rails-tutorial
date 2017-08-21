@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :setting_for_logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :guard_for_logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :setting_for_correct_user, only: [:edit, :update]
   before_action :setting_for_admin_user, only: :destroy
 
@@ -54,12 +54,11 @@ class UsersController < ApplicationController
 
   # before action
 
-  def setting_for_logged_in_user
-    unless logged_in?
-      store_location
-      flash[:danger] = "Please log in."
-      redirect_to login_url
-    end
+  def guard_for_logged_in_user
+    return if logged_in?
+    store_location
+    flash[:danger] = "Please log in."
+    redirect_to login_url
   end
 
   def setting_for_correct_user
