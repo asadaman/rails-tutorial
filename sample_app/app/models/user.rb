@@ -18,8 +18,10 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, Authentication.convert_string_to_digest(remember_token))
   end
 
-  def authenticated?(remember_token)
-    BCrypt::Password.new(remember_digest).is_password?(remember_token) if remember_digest.present?
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return if digest.nil?
+    BCrypt::Password.new(digest).is_password?(token)
   end
 
   def forget

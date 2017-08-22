@@ -29,7 +29,7 @@ module SessionsHelper
   def user_from_user_id
     user = User.find_by(id: user_id_from_cookie_or_session)
     return user if user_on_session?
-    if user_on_cookies? && user.authenticated?(cookies[:remember_token])
+    if user_on_cookies? && user.authenticated?(:remember, cookies[:remember_token])
       log_in(user)
       user
     end
