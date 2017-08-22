@@ -26,7 +26,7 @@ module SessionsHelper
     cookies.signed[:user_id].present?
   end
 
-  def user_from_user_id
+  def user
     user = User.find_by(id: user_id_from_cookie_or_session)
     return user if user_on_session?
     if user_on_cookies? && user.authenticated?(:remember, cookies[:remember_token])
@@ -37,7 +37,7 @@ module SessionsHelper
 
   def current_user
     return if user_id_from_cookie_or_session.blank?
-    user_from_user_id
+    user
   end
 
   def set_current_user
