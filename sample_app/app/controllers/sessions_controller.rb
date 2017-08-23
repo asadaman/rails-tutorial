@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  MESSAGE = "Account not activated.Check your email for the activation link.".freeze
+
   def new
   end
 
@@ -29,9 +31,10 @@ class SessionsController < ApplicationController
       should_remember_user? ? remember(user) : forget(user)
       redirect_back_or(user)
     else
-      message = "Account not activated."
-      message += "Check your email for the activation link."
-      flash[:warning] = message
+      # message = "Account not activated."
+      # message += "Check your email for the activation link."
+      # flash[:warning] = message
+      flash[:warning] = MESSAGE
       redirect_to(root_url)
     end
   end
