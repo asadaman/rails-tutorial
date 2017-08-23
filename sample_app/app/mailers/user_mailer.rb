@@ -11,7 +11,7 @@ class UserMailer < ApplicationMailer
     mail to: "to@example.org"
   end
 
-  def send_activation_email(user)
+  def self.send_activation_email(user)
     account_activation(user).deliver_now
   end
 end
