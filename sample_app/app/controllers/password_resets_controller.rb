@@ -1,7 +1,7 @@
 class PasswordResetsController < ApplicationController
   before_action :set_user, only: [:edit, :update]
-  before_action :is_valid_user, only: [:edit, :update]
-  before_action :check_expiration, only: [:edit, :update]
+  before_action :check_user_authentication, only: [:edit, :update]
+  before_action :check_password_reset_token_expiration, only: [:edit, :update]
 
   def new
   end
@@ -47,13 +47,13 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by(email: params[:email])
   end
 
-  def is_valid_user
+  def check_user_authentication
     return if @user && @user.activated? &&
-      @user.authenticated?(:reset, params[:id])
+              @user.authenticated?(:reset, params[:id])
     redirect_to root_url
   end
 
-  def check_expiration
+  def check_password_reset_token_expiration
     if @user.password_reset_expired?
       flash[:danger] = "Password reset has expired."
       redirect_to new_password_reset_url
