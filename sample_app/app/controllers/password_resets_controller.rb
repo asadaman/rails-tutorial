@@ -49,7 +49,7 @@ class PasswordResetsController < ApplicationController
   end
 
   def check_user_authentication
-    return if @user && @user.activated? &&
+    return if @user.present? && @user.activated? &&
               @user.authenticated?(:reset, params[:id])
     redirect_to root_url
   end
