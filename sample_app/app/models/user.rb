@@ -34,8 +34,9 @@ class User < ApplicationRecord
 
   def create_reset_digest
     self.reset_token = Authentication.new_token
-    update_attribute(:reset_digest, Authentication.convert_string_to_digest(reset_token))
-    update_attribute(:reset_sent_at, Time.zone.now)
+    # update_attribute(:reset_digest, Authentication.convert_string_to_digest(reset_token))
+    # update_attribute(:reset_sent_at, Time.zone.now)
+      update_columns(reset_digest: Authentication.convert_string_to_digest(reset_token), reset_sent_at: Time.zone.now)
   end
 
   def password_reset_expired?
