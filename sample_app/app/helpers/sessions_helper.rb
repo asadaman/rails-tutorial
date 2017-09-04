@@ -28,6 +28,7 @@ module SessionsHelper
 
   def user_on_cookie_or_session
     user = User.find_by(id: user_id_from_cookie_or_session)
+    return if user.nil?
     return user if user_on_session?
     if user_on_cookies? && user.authenticated?(:remember, cookies[:remember_token])
       log_in(user)

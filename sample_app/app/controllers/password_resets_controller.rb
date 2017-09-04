@@ -48,9 +48,12 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by(email: params[:email])
   end
 
+  def user_authenticate?
+    @user.present? && @user.activated? && @user.authenticated?(:reset, params[:id])
+  end
+
   def check_user_authentication
-    return if @user.present? && @user.activated? &&
-              @user.authenticated?(:reset, params[:id])
+    return if user_authenticate?
     redirect_to root_url
   end
 
