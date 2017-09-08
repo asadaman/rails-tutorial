@@ -2,9 +2,9 @@ require "./test/test_helper"
 
 class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
-  has_many :active_relationships, class_name: "Relationship",
+  has_many :active_relationships, class_name: "FollowingRelation",
               foreign_key: "follower_id", dependent: :destroy
-  has_many :passive_relationships, class_name: "Relationship",
+  has_many :passive_relationships, class_name: "FollowingRelation",
               foreign_key: "followed_id", dependent: :destroy
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
@@ -43,7 +43,8 @@ class User < ApplicationRecord
 
   def create_reset_digest
     self.reset_token = Authentication.new_token
-    update_columns(reset_digest: Authentication.convert_string_to_digest(reset_token), reset_sent_at: Time.zone.now)
+    update_columns(reset_digest: Authentication.convert_string_to_digest(reset_token),
+                   reset_sent_at: Time.zone.now)
   end
 
   def password_reset_expired?
@@ -51,7 +52,8 @@ class User < ApplicationRecord
   end
 
   def feed
-    Micropost.where("user_id = ?", id)
+    following_ids = "SELECT followed_id FROM following_relations WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
   end
 
   def follow(other_user)
